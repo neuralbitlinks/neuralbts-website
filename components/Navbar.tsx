@@ -47,7 +47,7 @@ export function Navbar() {
             </span>
           </Link>
 
-          <div className="hidden items-center gap-1 lg:flex">
+          <div className="hidden items-center gap-1 rounded-full bg-ink p-1.5 shadow-lg lg:flex">
             {nav.map((item) => {
               const active =
                 item.href === "/"
@@ -57,16 +57,20 @@ export function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="relative px-3.5 py-2 text-sm font-medium text-ink-soft transition-colors hover:text-ink"
+                  className="relative rounded-full px-4 py-2 text-sm font-medium transition-colors"
                 >
                   {active && (
                     <motion.span
                       layoutId="nav-pill"
-                      className="absolute inset-0 rounded-full bg-bg-soft"
+                      className="absolute inset-0 rounded-full bg-white"
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
                     />
                   )}
-                  <span className={`relative ${active ? "text-ink" : ""}`}>
+                  <span
+                    className={`relative ${
+                      active ? "text-ink" : "text-white/60 hover:text-white"
+                    }`}
+                  >
                     {item.label}
                   </span>
                 </Link>
