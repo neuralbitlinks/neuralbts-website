@@ -57,6 +57,28 @@ body {
   }
 }
 
+/* Feature cards: white by default, fill with their accent colour on hover */
+.fcard:hover .fcard-grad {
+  opacity: 1;
+}
+.fcard .fcard-icon {
+  color: var(--accent);
+}
+.fcard:hover .fcard-icon,
+.fcard:hover .fcard-title,
+.fcard:hover .fcard-arrow {
+  color: #ffffff;
+}
+.fcard:hover .fcard-body {
+  color: rgba(255, 255, 255, 0.85);
+}
+.fcard:hover .fcard-art-color {
+  opacity: 0;
+}
+.fcard:hover .fcard-art-light {
+  opacity: 1;
+}
+
 /* Grain / subtle texture for dark sections */
 .noise::before {
   content: "";

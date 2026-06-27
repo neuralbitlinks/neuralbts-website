@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
 type AccentKey = "teal" | "amber" | "red" | "purple" | "blue" | "orange";
 
@@ -79,12 +80,24 @@ function Icon({ name }: { name: IconKey }) {
 }
 
 /** Abstract striped-geometric corner artwork, themed by accent colour. */
-function CardArt({ color, light, uid }: { color: string; light?: boolean; uid: string }) {
+function CardArt({
+  color,
+  light,
+  uid,
+  className,
+}: {
+  color: string;
+  light?: boolean;
+  uid: string;
+  className?: string;
+}) {
   const c = light ? "#ffffff" : color;
   return (
     <svg
       viewBox="0 0 170 130"
-      className="pointer-events-none absolute bottom-0 right-0 h-[120px] w-[170px]"
+      className={`pointer-events-none absolute bottom-0 right-0 h-[120px] w-[170px] ${
+        className ?? ""
+      }`}
       aria-hidden
     >
       <defs>
@@ -98,7 +111,7 @@ function CardArt({ color, light, uid }: { color: string; light?: boolean; uid: s
 
       {/* striped sphere */}
       <g clipPath={`url(#sphere-${uid})`}>
-        <rect x="84" y="58" width="68" height="68" fill={c} opacity={light ? 0.32 : 0.95} />
+        <rect x="84" y="58" width="68" height="68" fill={c} opacity={light ? 0.4 : 0.95} />
         {Array.from({ length: 9 }).map((_, i) => (
           <rect
             key={i}
@@ -114,7 +127,7 @@ function CardArt({ color, light, uid }: { color: string; light?: boolean; uid: s
 
       {/* striped half-loaf */}
       <g clipPath={`url(#loaf-${uid})`}>
-        <rect x="40" y="86" width="44" height="44" fill={c} opacity={light ? 0.26 : 0.75} />
+        <rect x="40" y="86" width="44" height="44" fill={c} opacity={light ? 0.34 : 0.75} />
         {Array.from({ length: 6 }).map((_, i) => (
           <rect
             key={i}
@@ -132,10 +145,10 @@ function CardArt({ color, light, uid }: { color: string; light?: boolean; uid: s
       <path
         d="M150 130a40 40 0 0 0-40-40v40Z"
         fill={c}
-        opacity={light ? 0.22 : 0.45}
+        opacity={light ? 0.3 : 0.45}
       />
       {/* small dot */}
-      <circle cx="92" cy="112" r="8" fill={c} opacity={light ? 0.5 : 0.9} />
+      <circle cx="92" cy="112" r="8" fill={c} opacity={light ? 0.6 : 0.9} />
     </svg>
   );
 }
@@ -146,7 +159,6 @@ export function FeatureCard({
   href = "#",
   accent,
   icon,
-  filled = false,
   uid,
 }: {
   title: string;
@@ -154,52 +166,45 @@ export function FeatureCard({
   href?: string;
   accent: AccentKey;
   icon: IconKey;
-  filled?: boolean;
   uid: string;
 }) {
   const a = ACCENTS[accent];
+  const vars = {
+    "--from": a.from,
+    "--to": a.to,
+    "--accent": a.solid,
+  } as CSSProperties;
 
   return (
     <Link
       href={href}
-      className={`group relative flex h-full min-h-[260px] flex-col overflow-hidden rounded-lg p-7 transition-all duration-300 hover:-translate-y-1.5 ${
-        filled
-          ? "text-white shadow-lg"
-          : "border border-line bg-white text-ink shadow-sm hover:shadow-lg"
-      }`}
-      style={
-        filled
-          ? { backgroundImage: `linear-gradient(150deg, ${a.from}, ${a.to})` }
-          : undefined
-      }
+      style={vars}
+      className="fcard group relative flex h-full min-h-[260px] flex-col overflow-hidden rounded-lg border border-line bg-white p-7 text-ink shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lg"
     >
-      {/* icon top-right */}
+      {/* gradient fill that fades in on hover */}
       <div
-        className="absolute right-6 top-6"
-        style={{ color: filled ? "#ffffff" : a.solid }}
-      >
+        className="fcard-grad pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300"
+        style={{ backgroundImage: "linear-gradient(150deg, var(--from), var(--to))" }}
+      />
+
+      {/* icon top-right */}
+      <div className="fcard-icon absolute right-6 top-6 transition-colors duration-300">
         <Icon name={icon} />
       </div>
 
       {/* title + body */}
       <div className="relative max-w-[78%]">
-        <h3 className="font-display text-xl font-semibold leading-snug">{title}</h3>
-        <p
-          className={`mt-2.5 text-sm leading-relaxed ${
-            filled ? "text-white/80" : "text-ink-soft"
-          }`}
-        >
+        <h3 className="fcard-title font-display text-xl font-semibold leading-snug transition-colors duration-300">
+          {title}
+        </h3>
+        <p className="fcard-body mt-2.5 text-sm leading-relaxed text-ink-soft transition-colors duration-300">
           {body}
         </p>
       </div>
 
       {/* arrow bottom-left */}
       <div className="relative mt-auto pt-8">
-        <span
-          className={`flex h-6 w-6 items-center justify-center transition-transform duration-300 group-hover:translate-x-1.5 ${
-            filled ? "text-white" : "text-ink"
-          }`}
-        >
+        <span className="fcard-arrow flex h-6 w-6 items-center justify-center text-ink transition-transform duration-300 group-hover:translate-x-1.5">
           <svg width="26" height="16" viewBox="0 0 26 16" fill="none">
             <path
               d="M1 8h22M17 1l7 7-7 7"
@@ -212,7 +217,18 @@ export function FeatureCard({
         </span>
       </div>
 
-      <CardArt color={a.solid} light={filled} uid={uid} />
+      {/* corner artwork: coloured by default, light version fades in on hover */}
+      <CardArt
+        color={a.solid}
+        uid={`${uid}-c`}
+        className="fcard-art-color opacity-100 transition-opacity duration-300"
+      />
+      <CardArt
+        color={a.solid}
+        light
+        uid={`${uid}-l`}
+        className="fcard-art-light opacity-0 transition-opacity duration-300"
+      />
     </Link>
   );
 }

@@ -40,7 +40,6 @@ export default function HomePage() {
                 href="/services"
                 accent={serviceAccents[i % serviceAccents.length]}
                 icon={serviceIcons[i % serviceIcons.length]}
-                filled={i === 0}
                 uid={`svc-${i}`}
               />
             </StaggerItem>
