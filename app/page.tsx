@@ -5,7 +5,18 @@ import { Stats } from "@/components/Stats";
 import { CTASection } from "@/components/CTASection";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
+import { FeatureCard, type IconKey } from "@/components/FeatureCard";
 import { home } from "@/lib/content";
+
+const serviceAccents = ["teal", "amber", "red", "purple", "blue", "orange"] as const;
+const serviceIcons: IconKey[] = [
+  "tool",
+  "automation",
+  "ml",
+  "chat",
+  "integration",
+  "mlops",
+];
 
 export default function HomePage() {
   return (
@@ -23,17 +34,15 @@ export default function HomePage() {
         <Stagger className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {home.services.map((s, i) => (
             <StaggerItem key={s.title}>
-              <article className="card-hover group h-full">
-                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-bg-soft font-display text-sm font-bold text-ink transition-colors group-hover:bg-ink group-hover:text-white">
-                  {String(i + 1).padStart(2, "0")}
-                </div>
-                <h3 className="mt-5 font-display text-xl font-semibold">
-                  {s.title}
-                </h3>
-                <p className="mt-2.5 text-sm leading-relaxed text-ink-soft">
-                  {s.body}
-                </p>
-              </article>
+              <FeatureCard
+                title={s.title}
+                body={s.body}
+                href="/services"
+                accent={serviceAccents[i % serviceAccents.length]}
+                icon={serviceIcons[i % serviceIcons.length]}
+                filled={i === 0}
+                uid={`svc-${i}`}
+              />
             </StaggerItem>
           ))}
         </Stagger>
